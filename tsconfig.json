@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "noEmit": true,
+        "moduleResolution": "node",
+        "allowJs": true,
+        "maxNodeModuleJsDepth": 1,
+        "esModuleInterop": true,
+    }
+}

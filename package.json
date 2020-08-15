@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "@types/lodash": "^4.14.159",
+    "@types/node": "^14.0.27",
+    "@types/stream-to-array": "^2.3.0",
+    "gif-frames": "^1.0.1",
+    "lodash": "^4.17.20",
+    "outdent": "^0.7.1",
+    "png-js": "^1.0.0",
+    "stream-to": "^2.0.0",
+    "stream-to-array": "^2.3.0",
+    "ts-node": "^8.10.2",
+    "tslib": "^2.0.1",
+    "typescript": "^3.9.7"
+  }
+}

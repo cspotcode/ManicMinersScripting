@@ -1,0 +1,94 @@
+register:NumDrilledWalls>=10/Drill these 10 walls!
+
+
+OCCURENCE(TRIGGER)[EVENT]
+
+Where you replace each word with a proper scripting sentence.
+
+OCCURENCE defines how many times the event can happen.
+when - Fires every time the trigger happens. Triggers such as "walk" and "drive" execute once every time the tile is entered, not while someone is there.
+if - Fires once, and then the trigger is removed forever
+TRIGGER defines when the event should be called.
+EVENT defines what should happen.
+
+string foo = "hello"
+int foo = 123
+float foo = 123.456
+
+BuildingToolStore_C
+BuildingTeleportPad_C
+BuildingDocks_C
+BuildingPowerStation_C
+BuildingSupportStation_C
+BuildingUpgradeStation_C
+BuildingGeologicalCenter_C
+BuildingOreRefinery_C
+BuildingMiningLaser_C
+BuildingSuperTeleport_C
+BuildingElectricFence_C
+BuildingPowerPath_C
+BuildingErosionRepair_C
+VehicleHoverScout_C
+VehicleSmallDigger_C
+VehicleSmallTransportTruck_C
+VehicleSMLC_C
+VehicleRapidRider_C
+VehicleTunnelScout_C
+VehicleLoaderDozer_C
+VehicleGraniteGrinder_C
+VehicleChromeCrusher_C
+VehicleLMLC_C
+VehicleCargoCarrier_C
+VehicleTunnelTransport_C
+Crystal_C
+Ore_C
+Stud_C
+Barrier_C
+Dynamite_C
+ElectricFence_C
+EventErosion_C (Ongoing erosion events. Only exists if they are active!)
+EventLandslide_C (Ongoing landslide events. Only exists if they are active!)
+RechargeSeamGoal_C (Visible recharge seams. Can be used to count them.)
+NavModifierLava_C (Amount of lava tiles)
+NavModifierWater_C (Amount of water tiles)
+NavModifierPowerPath_C (Amount of Power Path tiles, any type. Only finished paths.)
+NavModifierRubble_C
+
+crystals	Returns the crystal count
+ore	Returns the ore count
+studs	Returns the studs count
+air	Returns the air status in miner-seconds
+miners	Returns the amount of miners
+vehicles	Returns the amount of vehicles
+buildings	Returns the amount of buildings
+
+
+(drill:ROW,COLUMN) - Call the corresponding event when a wall at ROW,COLUMN is drilled, or the wall there collapses.
+(laser:ROW,COLUMN) - Call the corresponding event when a wall at ROW,COLUMN is destroyed by a laser.
+(laserhit:ROW,COLUMN) - Call the corresponding event when a wall at ROW,COLUMN is hit by a laser, but not destroyed.
+(change:ROW,COLUMN) - Call the corresponding event when a wall at ROW,COLUMN is changed in any way. This includes reinforcing, shoveling once, drilling, finding a cave etc
+(change:ROW,COLUMN,ID) - Call the corresponding event when a wall at ROW,COLUMN is changed in any way to a tile of type ID.
+(reinforce:ROW,COLUMN) - Call the corresponding event when a wall at ROW,COLUMN is reinforced by any unit.
+(time:SECONDS) - Call the corresponding event when SECONDS seconds have been reached. Supports decimal floats.
+(hover:ROW,COLUMN) - Activates when the player hovers that tile. The tile has to be visible.
+(click:ROW,COLUMN) - Activates when the player clicks that tile. The tile has to be visible.
+(walk:ROW,COLUMN) - Activates when a miner walks on a tile.
+(drive:ROW,COLUMN) - Activates when a vehicle drives on a tile.
+(VARIABLE>=OTHERNUMBER) - Activates when VARIABLE is larger than, or equal to, OTHERNUMBER. The operands can be replaced by any valid float or integer variable, and also regular numeric values. All variables used here are converted to integers, which cuts off any decimals, so if you compare 2.2 and 2.9 they will be equal.
+
+>=	Larger than or equal to
+>	Larger than
+<=	Less than
+<	Less than or equal to
+==	Equal to
+!=	Not equal to
+
+[drill:ROW,COLUMN]: Drill tile ROW,COLUMN. It will play the appropriate effect and place rubble, ignoring what tile it is. This'll get fixed later to check that the tile can actually be drilled.
+[msg:MsgStr]: Display the message string MsgStr, as defined above
+[place:ROW,COLUMN,ID]: Place tile with ID at ROW,COLUMN. To find the IDs of the tiles, check the Wiki: https://manicminers.fandom.com/wiki/Level_data_file. Note that if you place a wall on top of a miner or vehicle, they will just phase through the ground. This behaviour will be updated in the future to simply bury them until they are dug out.
+[wait:SECONDS]: Wait for SECONDS seconds before executing the next command. Only supported inside of event chain.
+[win:MsgStr]: Player wins the level with the message defined by string MsgStr
+[lose:MsgStr]: Player loses the level with the message defined by string MsgStr
+[sound:MySoundName]: Plays the .ogg file of that name from /ManicMiners/Levels/ASSETS/Sounds
+[pan:ROW,COLUMN]: The player's camera pans to the tile at ROW,COLUMN
+[shake:1.0]: The player's camera shakes with magnitude 1.0. The magnitude can be increased above 1.0.
