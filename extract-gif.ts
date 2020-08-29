@@ -1,10 +1,48 @@
 import gifFrames from 'gif-frames';
-import util from 'util';
-import { promisify } from 'util';
 import PNG from 'png-js';
 import streamToArray from 'stream-to-array';
 import { outdent } from 'outdent';
 import fs from 'fs';
+import {Command, Cli} from 'clipanion';
+
+class Args extends Command {
+    @Command.String('--gif')
+    gifPath!: string;
+
+    @Command.String('--out')
+    outputPath!: string;
+
+    @Command.Path()
+    async execute() {
+        await main(this);
+    }
+}
+
+async function main(args: Args) {
+    const {outputPath, gifPath} = args;
+    const frames = await parseFrames(gifPath);
+    const script = framesToScript({
+        frames,
+        // xOffset: Math.floor(frames[0].width / 2) - 50,
+        // yOffset: Math.floor(frames[0].height / 2) - 50,
+        xOffset: 80,
+        yOffset: 50,
+        xSampleRate: 6,
+        ySampleRate: 6,
+        width: 30,
+        height: 30,
+        mapXOffset: 1,
+        mapYOffset: 1,
+        delay: 0.05,
+        firstFrameDelay: 0.05,
+        // startTime: 5,
+        loop: true,
+        renderMethod: 'highlights'
+    });
+
+    console.log(frames[0].width, frames[0].height);
+    patchMap(outputPath, script);
+}
 
 const enum TileId {
     Ground = 1,
@@ -31,31 +69,6 @@ const enum ArrowColor {
     black = 'black',
     On = white,
     Off = black
-}
-
-async function main() {
-    const frames = await parseFrames('image.gif');
-    const script = framesToScript({
-        frames,
-        // xOffset: Math.floor(frames[0].width / 2) - 50,
-        // yOffset: Math.floor(frames[0].height / 2) - 50,
-        xOffset: 80,
-        yOffset: 50,
-        xSampleRate: 6,
-        ySampleRate: 6,
-        width: 30,
-        height: 30,
-        mapXOffset: 1,
-        mapYOffset: 1,
-        delay: 0.1,
-        firstFrameDelay: 0.1,
-        startTime: 1,
-        loop: true,
-        renderMethod: 'highlights'
-    });
-
-    console.log(frames[0].width, frames[0].height);
-    patchMap('./gif-to-mm.dat', script);
 }
 
 function patchMap(mapPath: string, script: string) {
@@ -121,14 +134,17 @@ interface ScriptOptions {
     mapYOffset: number;
     delay: number;
     firstFrameDelay: number;
-    startTime: number;
+    /** should be greater than time it takes to initialize */
+    // startTime: number;
     loop: boolean;
     renderMethod: 'tiles' | 'highlights';
 }
 function framesToScript(options: ScriptOptions) {
     const {
         frames,
-        delay, firstFrameDelay, startTime, loop,
+        delay, firstFrameDelay,
+        // startTime,
+        loop,
         width, height,
         mapXOffset, mapYOffset,
         xOffset, yOffset,
@@ -136,10 +152,17 @@ function framesToScript(options: ScriptOptions) {
         renderMethod
     } = options;
     let script = '';
+    function code(template: TemplateStringsArray, ...values: any[]) {
+        script += outdent(template, ...values);
+    }
 
     if(renderMethod === 'highlights') {
+        code `
+            # Declare all arrows, 4x for each pixel: 2x on, 2x off
+        
+        `;
         eachPixel((x, y) => {
-            script += outdent`
+            code `
                 arrow ${arrowName(x, y, 'off', 'a') }=${ ArrowColor.Off }
                 arrow ${arrowName(x, y, 'off', 'b') }=${ ArrowColor.Off }
                 arrow ${arrowName(x, y, 'on', 'a') }=${ ArrowColor.On }
@@ -147,35 +170,51 @@ function framesToScript(options: ScriptOptions) {
 
             `;
         });
-        script += 'init::;'
+    }
+    code `
+        init::;
+
+    `;
+
+    if(renderMethod === 'highlights') {
+        code `
+            # Turn on all 'a' variant pixels
+        `;
         eachPixel((x, y) => {
-            script += outdent`
-                    highlight:${mapCoords(x, y) },${ arrowName(x, y, 'off', 'a') };
-                    highlight:${mapCoords(x, y) },${ arrowName(x, y, 'on', 'a') };
+            code `
+                highlight:${mapCoords(x, y) },${ arrowName(x, y, 'off', 'a') };
+                highlight:${mapCoords(0, 0) },${ arrowName(x, y, 'on', 'a') };
 
             `;
         });
-        script += outdent`
-            truewait:0.5;
+        code `
+            # Wait till exactly when 'a' pixels blink off; then turn on 'b' variant pixels
+            truewait:1;
 
         `;
         eachPixel((x, y) => {
-            script += `
-                    highlight:${mapCoords(0, 0) },${ arrowName(x, y, 'off', 'b') };
-                    highlight:${mapCoords(0, 0) },${ arrowName(x, y, 'on', 'b') };
+            code `
+                highlight:${mapCoords(x, y) },${ arrowName(x, y, 'off', 'b') };
+                highlight:${mapCoords(0, 0) },${ arrowName(x, y, 'on', 'b') };
 
             `;
         });
     }
 
-    script += outdent`
-            when(time:${startTime })[animation]
+    code `
+            animation;
+
             animation::;
 
         `;
 
     let previousFrame = undefined;
-    for(const frame of frames) {
+    for(let frameIndex = 0, framesCount = frames.length; frameIndex < framesCount; frameIndex++) {
+        const frame = frames[frameIndex];
+        code `
+            # frame #${frameIndex}
+
+        `;
         eachPixel((x, y) => {
             const xPixel = xOffset + x * xSampleRate;
             const yPixel = yOffset + y * ySampleRate;
@@ -189,21 +228,28 @@ function framesToScript(options: ScriptOptions) {
                 if(pon === on) return;
             }
             if(renderMethod === 'tiles') {
-                script += outdent`
+                code `
                             place:${mapCoords(x, y) },${ on ? TileId.On : TileId.Off };
 
                         `;
             } else {
-                script += outdent`
-                        highlight:${mapCoords(x, y) },${ arrowName(x, y, on ? 'on' : 'off', 'a') };
-                        highlight:${mapCoords(x, y) },${ arrowName(x, y, on ? 'on' : 'off', 'b') };
-                        highlight:${mapCoords(0, 0) },${ arrowName(x, y, on ? 'off' : 'on', 'a') };
-                        highlight:${mapCoords(0, 0) },${ arrowName(x, y, on ? 'off' : 'on', 'b') };
+                code `
+                    highlight:${mapCoords(x, y) },${ arrowName(x, y, on ? 'on' : 'off', 'a') };
+                    highlight:${mapCoords(x, y) },${ arrowName(x, y, on ? 'on' : 'off', 'b') };
+                    hidearrow:${ arrowName(x, y, on ? 'off' : 'on', 'a') };
+                    hidearrow:${ arrowName(x, y, on ? 'off' : 'on', 'b') };
 
-                    `;
+                `;
+                // code `
+                //     highlight:${mapCoords(x, y) },${ arrowName(x, y, on ? 'on' : 'off', 'a') };
+                //     highlight:${mapCoords(x, y) },${ arrowName(x, y, on ? 'on' : 'off', 'b') };
+                //     highlight:${rawMapCoords(0, 0) },${ arrowName(x, y, on ? 'off' : 'on', 'a') };
+                //     highlight:${rawMapCoords(0, 0) },${ arrowName(x, y, on ? 'off' : 'on', 'b') };
+
+                // `;
             }
         });
-        script += outdent`
+        code `
             wait:${previousFrame ? delay : firstFrameDelay };
 
         `;
@@ -224,6 +270,9 @@ function framesToScript(options: ScriptOptions) {
     function mapCoords(x: number, y: number) {
         return `${ mapYOffset + y },${ mapXOffset + x }`;
     }
+    function rawMapCoords(x: number, y: number) {
+        return `${  y },${  x }`;
+    }
 }
 
 function arrowName(x: number, y: number, onOff: 'on' | 'off', variant: 'a' | 'b') {
@@ -234,4 +283,13 @@ function* range(count) {
     for(let i = 0; i < count; i++) yield i;
 }
 
-main();
+const cli = new Cli({
+    binaryLabel: 'Gif-to-ManicMiners',
+    binaryName: 'gif-to-mm'
+});
+cli.register(Args);
+cli.register(Command.Entries.Help);
+cli.register(Command.Entries.Version);
+cli.runExit(process.argv.slice(2), {
+    ...Cli.defaultContext
+});
