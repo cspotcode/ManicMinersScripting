@@ -6,6 +6,7 @@
         "maxNodeModuleJsDepth": 1,
         "esModuleInterop": true,
         "experimentalDecorators": true,
-        "outDir": "dist"
+        "outDir": "dist",
+        "target": "es6"
     }
 }
