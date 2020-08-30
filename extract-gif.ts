@@ -4,6 +4,7 @@ import streamToArray from 'stream-to-array';
 import { outdent } from 'outdent';
 import fs from 'fs';
 import {Command, Cli} from 'clipanion';
+import * as yup from 'yup';
 
 class Args extends Command {
     @Command.String('--gif')
@@ -11,6 +12,11 @@ class Args extends Command {
 
     @Command.String('--out')
     outputPath!: string;
+
+    static schema = yup.object().shape({
+        gifPath: yup.string().required(),
+        outputPath: yup.string().required(),
+    });
 
     @Command.Path()
     async execute() {
@@ -27,10 +33,10 @@ async function main(args: Args) {
         // yOffset: Math.floor(frames[0].height / 2) - 50,
         xOffset: 80,
         yOffset: 50,
-        xSampleRate: 6,
-        ySampleRate: 6,
-        width: 30,
-        height: 30,
+        xSampleRate: 4,
+        ySampleRate: 4,
+        width: 45,
+        height: 45,
         mapXOffset: 1,
         mapYOffset: 1,
         delay: 0.05,
