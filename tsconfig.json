@@ -8,5 +8,10 @@
         "experimentalDecorators": true,
         "outDir": "dist",
         "target": "es6"
-    }
+    },
+    "include": [
+        "*.ts",
+        "map-generator/*.ts",
+        "map-generator/python-shims/*.ts"
+    ]
 }

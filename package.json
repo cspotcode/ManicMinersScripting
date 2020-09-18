@@ -1,18 +1,26 @@
 {
   "dependencies": {
+    "@types/jquery": "^3.5.1",
     "@types/lodash": "^4.14.159",
-    "@types/node": "^14.6.2",
+    "@types/node": "^14.11.1",
     "@types/stream-to-array": "^2.3.0",
+    "@types/webpack": "^4.41.22",
     "clipanion": "^2.5.0",
     "gif-frames": "^1.0.1",
     "lodash": "^4.17.20",
     "outdent": "^0.7.1",
     "png-js": "^1.0.0",
+    "prettier": "^2.1.2",
     "stream-to": "^2.0.0",
     "stream-to-array": "^2.3.0",
+    "ts-loader": "^8.0.3",
     "ts-node": "^9.0.0",
     "tslib": "^2.0.1",
     "typescript": "^4.0.2",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0",
+    "yargs": "^16.0.3",
     "yup": "^0.29.3"
   }
 }

@@ -1,11 +1,9 @@
 import * as random from "./python-shims/random";
 import * as time from "./python-shims/time";
-import * as os from "./python-shims/os";
-import { range, max, min, input } from './python-shims/globals';
+import { range, max, min } from './python-shims/globals';
 import { createArrayFilledWith } from "./misc";
-import { sortBy, each, has, keys, cloneDeep } from "lodash";
-import { displayPNG } from "./extracted-functions";
-import { writeFileSync } from "fs";
+import { sortBy, keys, cloneDeep } from "lodash";
+import { displayPNG } from "./displayPNG";
 function _pj_snippets() {
   function in_es6(left, right) {
     if (right instanceof Array || typeof right === "string") {
@@ -32,12 +30,19 @@ const _pj = Object.assign({}, _pj_snippets());
 function floordiv(a: number, b: number) {
   return (a / b) << 0;
 }
-type Array2D<T = number> = Array<Array<T>>;
-type Point = [number, number];
+export type Array2D<T = number> = Array<Array<T>>;
+function forEachArray2D(array: Array2D, callback: (i: number, j: number) => void) {
+  for (let i = 0, _pj_a = array.length; i < _pj_a; i += 1) {
+    for (let j = 0, _pj_b = array[0].length; j < _pj_b; j += 1) {
+      callback(i, j);
+    }
+  }
+}
+export type Point = [number, number];
 function pointsEqual(a: Point, b: Point) {
   return a[0] === b[0] && a[1] === b[1];
 }
-interface Parameters {
+export interface Parameters {
     length: number;
     width: number;
     size?: number;
@@ -66,8 +71,8 @@ interface Parameters {
     show: boolean | 'height' | 'both';
 }
 type Biome = "ice" | "rock" | "lava";
-function main() {
-  const parameters: Parameters = {
+export function generateDefaultParameters(): Parameters {
+  return {
     length: 64,
     width: 64,
     size: undefined,
@@ -95,32 +100,22 @@ function main() {
     name: "Untitled",
     show: false,
   };
-  const yargsParsed = require('yargs').parse();
-  each(yargsParsed, (v, k) => {
-    if(has(parameters, k)) {
-      parameters[k] = v;
-    }
-  });
+}
+export function attemptGenerationWithRetries(params: Parameters) {
   let attempts = 1;
-  let done = false;
-  while (!done && attempts < 100) {
-    const output = mapgen(parameters);
-    if (output !== false) {
-      if (parameters["save"] === true) {
-        saveFile(parameters["name"], output);
-      }
-      done = true;
+  let success = false;
+  let map: ReturnType<typeof mapgen> = null;
+  while (!success && attempts < 100) {
+    map = mapgen(params);
+    if (map != null) {
+      success = true;
     }
     attempts += 1;
   }
-  if (!done) {
-    console.log("Unable to create a map with those parameters");
-  }
-  if (parameters["stats"]) {
-    input();
-  }
+  return {success, map};
 }
-function mapgen(params: Parameters) {
+/** returns `null` if unable to generate map */
+export function mapgen(params: Parameters) {
   const start = time.process_time();
   if (params.size != null) {
     params.size = floordiv(params.size + 7, 8) * 8;
@@ -136,7 +131,7 @@ function mapgen(params: Parameters) {
   speleogenesis(solidArray);
   cleanup(solidArray);
   if (fillExtra(solidArray) === false) {
-    return false;
+    return null;
   }
   randomize(wallArray, 1 - params.wallDensity);
   speleogenesis(wallArray);
@@ -208,10 +203,13 @@ function mapgen(params: Parameters) {
   addRechargeSeams(wallArray, params.rechargeSeamDensity, 12);
   const base = chooseBase(wallArray);
   if (base === false) {
-    return false;
+    return null;
   }
   setBase(base[0], wallArray, heightArray);
   const caveList = findCaves(wallArray, base[0]);
+  const finish = time.process_time();
+
+  function _convertToMM() {
   const MMtext = convertToMM(
     wallArray,
     caveList,
@@ -223,24 +221,20 @@ function mapgen(params: Parameters) {
     landslideList,
     params.flowInterval,
     flowList,
-    base,
+    base as Point[],
     params.oxygen,
     params.name,
     params
   );
-  if (params.show === true) {
-    displayPNG(wallArray, crystalArray, oreArray, landslideList, flowList);
+  return MMtext;
   }
-  if (params.show === "height") {
+  function renderToCanvas(canvasElement: HTMLCanvasElement) {
+  displayPNG(wallArray, crystalArray, oreArray, landslideList, flowList, canvasElement);
+  }
+  function showHeight() {
     displayArr(heightArray);
   }
-  if (params.show === "both") {
-    displayPNG(wallArray, crystalArray, oreArray, landslideList, flowList);
-    displayArr(heightArray);
-  }
-  const finish = time.process_time();
-  console.log();
-  if (params.stats) {
+  function logStats() {
     console.log("Parameters:");
     for(const key of keys(params)) {
 
@@ -261,16 +255,14 @@ function mapgen(params: Parameters) {
     }
     console.log();
   }
-  return MMtext;
+  return {convertToMM: _convertToMM, renderToCanvas, showHeight, logStats};
 }
 function addSeams(array: Array2D, resourceArray: Array2D, density: number, type: number) {
-  for (let i = 0, _pj_a = array.length; i < _pj_a; i += 1) {
-    for (let j = 0, _pj_b = array[0].length; j < _pj_b; j += 1) {
+  forEachArray2D(array, (i, j) => {
       if (resourceArray[i][j] > 2 && random.random() < density) {
         array[i][j] = type;
       }
-    }
-  }
+  });
 }
 function addRechargeSeams(array: Array2D, density: number, type?: unknown) {
   for (let i = 1, _pj_a = array.length - 1; i < _pj_a; i += 1) {
@@ -311,15 +303,13 @@ function aLandslideHasOccured(array: Array2D, stability: number) {
   return landslideList;
 }
 function aSlimySlugIsInvadingYourBase(array: Array2D, slugDensity: number) {
-  for (let i = 0, _pj_a = array.length; i < _pj_a; i += 1) {
-    for (let j = 0, _pj_b = array[0].length; j < _pj_b; j += 1) {
+  forEachArray2D(array, (i, j) => {
       if (array[i][j] === 0) {
         if (random.random() < slugDensity) {
           array[i][j] = 9;
         }
       }
-    }
-  }
+  });
 }
 function chooseBase(array: Array2D) {
   const possibleBaseList: Point[] = [];
@@ -359,6 +349,22 @@ function cleanup(array: Array2D) {
     }
   }
 }
+/** mapping from generator IDs to MM IDs */
+export const conversion = {
+  [0]: "1",
+  [1]: "26",
+  [2]: "30",
+  [3]: "34",
+  [4]: "38",
+  [6]: "11",
+  [7]: "6",
+  [8]: "63",
+  [9]: "12",
+  [10]: "42",
+  [11]: "46",
+  [12]: "50",
+  [13]: "14",
+};
 function convertToMM(
   walls: Array2D,
   caveList: Point[][],
@@ -407,27 +413,10 @@ function convertToMM(
     "erosioninitialwaittime:10\n" +
     "}\n";
   MMtext += "tiles{\n";
-  const conversion = {
-    [0]: "1",
-    [1]: "26",
-    [2]: "30",
-    [3]: "34",
-    [4]: "38",
-    [6]: "11",
-    [7]: "6",
-    [8]: "63",
-    [9]: "12",
-    [10]: "42",
-    [11]: "46",
-    [12]: "50",
-    [13]: "14",
-  };
   const outputWalls = cloneDeep(walls).map(v => v.map(v => ''));
-  for (let i = 0, _pj_a = walls.length; i < _pj_a; i += 1) {
-    for (let j = 0, _pj_b = walls[0].length; j < _pj_b; j += 1) {
+  forEachArray2D(walls, (i, j) => {
       outputWalls[i][j] = conversion[walls[i][j]];
-    }
-  }
+  });
   for(const cave of caveList) {
     for(const space of cave) {
       outputWalls[space[0]][space[1]] = (
@@ -435,33 +424,33 @@ function convertToMM(
       ).toString();
     }
   }
-  for (let i = 0, _pj_a = walls.length; i < _pj_a; i += 1) {
-    for (let j = 0, _pj_b = walls[0].length; j < _pj_b; j += 1) {
-      MMtext += walls[i][j] + ",";
+  for(const w of outputWalls) {
+    for(const i of w) {
+      MMtext += i + ",";
     }
     MMtext += "\n";
   }
   MMtext += "}\n";
   MMtext += "height{\n";
-  for (let i = 0, _pj_a = height.length; i < _pj_a; i += 1) {
-    for (let j = 0, _pj_b = height[0].length; j < _pj_b; j += 1) {
-      MMtext += height[i][j].toString() + ",";
+  for(const w of height) {
+    for(const i of w) {
+      MMtext += i.toString() + ",";
     }
     MMtext += "\n";
   }
   MMtext += "}\n";
   MMtext += "resources{\n";
   MMtext += "crystals:\n";
-  for (let i = 0, _pj_a = walls.length; i < _pj_a; i += 1) {
-    for (let j = 0, _pj_b = walls[0].length; j < _pj_b; j += 1) {
-      MMtext += crystals[i][j].toString() + ",";
+  for(const w of crystals) {
+    for(const i of w) {
+      MMtext += i.toString() + ",";
     }
     MMtext += "\n";
   }
   MMtext += "ore:\n";
-  for (let i = 0, _pj_a = walls.length; i < _pj_a; i += 1) {
-    for (let j = 0, _pj_b = walls[0].length; j < _pj_b; j += 1) {
-      MMtext += ore[i][j].toString() + ",";
+  for(const w of ore) {
+    for(const i of w) {
+      MMtext += i.toString() + ",";
     }
     MMtext += "\n";
   }
@@ -513,11 +502,11 @@ function convertToMM(
       MMtext += (i * landslideInterval).toString() + ":";
     }
     for (
-      let space, _pj_d = 0, _pj_b = landslideList[i - 1], _pj_c = _pj_b.length;
+      let _pj_d = 0, _pj_b = landslideList[i - 1], _pj_c = _pj_b.length;
       _pj_d < _pj_c;
       _pj_d += 1
     ) {
-      space = _pj_b[_pj_d];
+      const space = _pj_b[_pj_d];
       MMtext += space[1].toString() + "," + space[0].toString() + "/";
     }
     if (landslideList[i - 1].length) {
@@ -614,23 +603,20 @@ function createFlowList(array: Array2D, density: number, height, preFlow, terrai
   const spillList: Point[][] = [];
   const flowSourceList: Point[] = [];
   const sources: Point[] = [];
-  for (let i = 0, _pj_a = array.length; i < _pj_a; i += 1) {
-    for (let j = 0, _pj_b = array[0].length; j < _pj_b; j += 1) {
+  forEachArray2D(array, (i, j) => {
       if (array[i][j] === 0) {
         flowSourceList.push([i, j]);
       }
       if (_pj.in_es6(array[i][j], range(4))) {
         flowArray[i][j] = 0;
       }
-    }
-  }
+  });
   for (let i = flowSourceList.length, _pj_a = 0; i < _pj_a; i += -1) {
     if (random.random() < density) {
       sources.push(flowSourceList[i - 1]);
     }
   }
   for(const source of sources) {
-
     array[source[0]][source[1]] = 7;
     const flowList = [source];
     flowArray[source[0]][source[1]] = 1;
@@ -735,8 +721,7 @@ function details(array: Array2D, maxDistance: number) {
   }
 }
 function display(array1: Array2D) {
-  let colors;
-  colors = {
+  const colors = {
     1: "\u001b[48;2;24;0;59m",
     101: "\u001b[48;2;24;0;59m",
     26: "\u001b[48;2;166;72;233m",
@@ -757,10 +742,10 @@ function display(array1: Array2D) {
     50: "\u001b[48;2;250;255;14m",
     14: "\u001b[48;2;190;190;190m",
     114: "\u001b[48;2;190;190;190m",
-  };
-  for (let i = 0, _pj_a = array1.length; i < _pj_a; i += 1) {
-    for (let j = 0, _pj_b = array1[0].length; j < _pj_b; j += 1) {
-      console.log(colors[array1[i][j]], "\u001b[38;2;0;255;16m", "  ");
+  } as const;
+  for(const line of array1) {
+    for(const i of line) {
+      console.log(colors[i], "\u001b[38;2;0;255;16m", "  ");
     }
     console.log("\u001b[0m");
   }
@@ -768,21 +753,19 @@ function display(array1: Array2D) {
 function displayArr(array: Array2D, stats = false) {
   let min = array[0][0];
   let max = array[0][0];
-  for (let i = 0, _pj_a = array.length; i < _pj_a; i += 1) {
-    for (let j = 0, _pj_b = array[0].length; j < _pj_b; j += 1) {
+  forEachArray2D(array, (i, j) => {
       if (array[i][j] < min) {
         min = array[i][j];
       }
       if (array[i][j] > max) {
         max = array[i][j];
       }
-    }
-  }
+  });
   const difference = max - min;
-  for (let i = 0, _pj_a = array.length; i < _pj_a; i += 1) {
-    for (let j = 0, _pj_b = array[0].length; j < _pj_b; j += 1) {
-      value = (
-        ((array[i][j] - min) / (difference ? difference : 1)) * 255
+  for(const line of array) {
+    for(const i of line) {
+      const value = (
+        ((i - min) / (difference ? difference : 1)) * 255
       ) << 0;
       console.log("\u001b[48;2;", 0, ";", value, ";", 0, "m", "  ");
     }
@@ -791,13 +774,11 @@ function displayArr(array: Array2D, stats = false) {
   if (stats) {
     const set: number[] = [];
     const differences: number[] = [];
-    for (let i = 0, _pj_a = array.length; i < _pj_a; i += 1) {
-      for (let j = 0, _pj_b = array[0].length; j < _pj_b; j += 1) {
+    forEachArray2D(array, (i, j) => {
         if (!_pj.in_es6(array[i][j], set)) {
           set.push(array[i][j]);
         }
-      }
-    }
+    });
     set.sort();
     console.log(set);
     for (let i = 0, _pj_a = set.length - 1; i < _pj_a; i += 1) {
@@ -808,13 +789,11 @@ function displayArr(array: Array2D, stats = false) {
 }
 function fillExtra(array: Array2D) {
   const tmap = createArray(array.length, array[0].length, 0);
-  for (let i = 0, _pj_a = array.length; i < _pj_a; i += 1) {
-    for (let j = 0, _pj_b = array[0].length; j < _pj_b; j += 1) {
+  forEachArray2D(array, (i, j) => {
       if (array[i][j] !== 0) {
         tmap[i][j] = -1;
       }
-    }
-  }
+  });
   const spacesUnsorted = openSpaces(tmap, false);
   if (spacesUnsorted.length < 1) {
     return false;
@@ -983,20 +962,6 @@ function randomize(array: Array2D, probability: number) {
     }
   }
 }
-function saveFile(filename: string, content: string) {
-  filename = filename.replace(" ", "");
-  let counter = 0;
-  while (
-    os.path.isfile(filename + (counter ? counter.toString() : "") + ".dat")
-  ) {
-    counter += 1;
-  }
-  filename += (counter ? counter.toString() : "") + ".dat";
-  writeFileSync(filename, content);
-  console.log("Saved to:", filename);
-  console.log("   ", os.path.join(os.getcwd(), filename));
-  console.log();
-}
 function setBase(base: Point, array: Array2D, height: Array2D) {
   array[base[0]][base[1]] = 13;
   array[base[0] + 1][base[1]] = 13;
@@ -1017,11 +982,9 @@ function speleogenesis(array: Array2D) {
   while (changed) {
     changed = false;
     const tmap = createArray(array.length, array[0].length, 4);
-    for (let i = 0, _pj_a = array.length; i < _pj_a; i += 1) {
-      for (let j = 0, _pj_b = array[0].length; j < _pj_b; j += 1) {
+    forEachArray2D(array, (i, j) => {
         tmap[i][j] = array[i][j];
-      }
-    }
+    });
     for (let i = 1, _pj_a = array.length - 1; i < _pj_a; i += 1) {
       for (let j = 1, _pj_b = array[0].length - 1; j < _pj_b; j += 1) {
         let adjacent = 0;
@@ -1054,4 +1017,3 @@ function speleogenesis(array: Array2D) {
     }
   }
 }
-main();
