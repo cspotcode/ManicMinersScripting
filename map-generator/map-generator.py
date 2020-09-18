@@ -73,7 +73,7 @@ def mapgen(params):
     # Set length and width
     if params["size"]:
         # Round up to the next chunk
-        params["size"] = (params["size"] + 7) // 8 * 8
+        params["size"] = floordiv((params["size"] + 7), 8) * 8
         params["length"] = params["size"]
         params["width"] = params["size"]
 
@@ -449,7 +449,7 @@ def convertToMM(walls,
     # Objectives
     MMtext += 'objectives{\n'
     # Collect half of the crystals, maximum of 999
-    MMtext += 'resources: ' + str(min((crystalCount // 2), 999)) + ',0,0\n'
+    MMtext += 'resources: ' + str(min(floordiv(crystalCount, 2), 999)) + ',0,0\n'
     MMtext += '}\n'
 
     # Buildings
@@ -466,10 +466,10 @@ def convertToMM(walls,
         # X = chunk number
         # Y = row within chunk
         # Z = col within chunk
-        'Powerpaths=X=' + str((len(walls[0]) // 8) * (base[0][0] // 8) + (base[0][1] // 8)) +
+        'Powerpaths=X=' + str(floordiv(len(walls[0]), 8) * floordiv(base[0][0], 8) + floordiv(base[0][1], 8)) +
                   ' Y=' + str(base[0][0] % 8) +
                   ' Z=' + str(base[0][1] % 8) +
-                  '/X=' + str((len(walls[0]) // 8) * ((base[0][0] + 1) // 8) + (base[0][1] // 8)) +
+                  '/X=' + str(floordiv(len(walls[0]), 8) * floordiv(base[0][0] + 1, 8) + floordiv(base[0][1], 8)) +
                   ' Y=' + str((base[0][0] + 1) % 8) +
                   ' Z=' + str(base[0][1] % 8) + '/\n'
     )
@@ -516,7 +516,7 @@ def convertToMM(walls,
 
     # Briefing
     MMtext += 'briefing{\n'
-    MMtext += 'You must collect ' + str(min((crystalCount // 2), 999)) + ' energy crystals.  \n'
+    MMtext += 'You must collect ' + str(min(floordiv(crystalCount, 2), 999)) + ' energy crystals.  \n'
     MMtext += '}\n'
 
     return MMtext
@@ -774,7 +774,7 @@ def displayPNG(wallArray, crystalArray, oreArray, landslideList, flowList):
 
     # Create the image
     scale = 14
-    img = Image.new('RGB', (len(wallArray[0]) * scale + 1, len(wallArray) * scale + 1), color=(0,0,0))
+    img = Image.new_jscompat('RGB', (len(wallArray[0]) * scale + 1, len(wallArray) * scale + 1), color=(0,0,0))
 
     # Color conversions
     colors = {
@@ -1068,11 +1068,11 @@ def setBase(base, array, height):
     array[base[0] + 1][base[1]] = 13  # Building power path
 
     # Change geography to accomodate our buildings
-    average = ((height[base[0]][base[1]] +
+    average = floordiv((height[base[0]][base[1]] +
                 height[base[0] + 1][base[1]] +
                 height[base[0]][base[1] + 1] +
-                height[base[0] + 1][base[1] + 1])
-                // 4)
+                height[base[0] + 1][base[1] + 1]),
+                4)
     average = int(average)
     height[base[0]][base[1]] = average
     height[base[0] + 1][base[1]] = average
