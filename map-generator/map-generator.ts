@@ -242,12 +242,8 @@ function mapgen(params: Parameters) {
   console.log();
   if (params.stats) {
     console.log("Parameters:");
-    for (
-      let _pj_c = 0, _pj_a = keys(params), _pj_b = _pj_a.length;
-      _pj_c < _pj_b;
-      _pj_c += 1
-    ) {
-      const key = _pj_a[_pj_c];
+    for(const key of keys(params)) {
+
       console.log("    ", key, ": ", params[key]);
     }
     console.log("\nResults:");
@@ -432,18 +428,8 @@ function convertToMM(
       outputWalls[i][j] = conversion[walls[i][j]];
     }
   }
-  for (
-    let _pj_c = 0, _pj_a = caveList, _pj_b = _pj_a.length;
-    _pj_c < _pj_b;
-    _pj_c += 1
-  ) {
-    const cave = _pj_a[_pj_c];
-    for (
-      let _pj_f = 0, _pj_d = cave, _pj_e = _pj_d.length;
-      _pj_f < _pj_e;
-      _pj_f += 1
-    ) {
-      const space = _pj_d[_pj_f];
+  for(const cave of caveList) {
+    for(const space of cave) {
       outputWalls[space[0]][space[1]] = (
         Number.parseInt(outputWalls[space[0]][space[1]]) + 100
       ).toString();
@@ -643,12 +629,8 @@ function createFlowList(array: Array2D, density: number, height, preFlow, terrai
       sources.push(flowSourceList[i - 1]);
     }
   }
-  for (
-    let _pj_c = 0, _pj_a = sources, _pj_b = _pj_a.length;
-    _pj_c < _pj_b;
-    _pj_c += 1
-  ) {
-    const source = _pj_a[_pj_c];
+  for(const source of sources) {
+
     array[source[0]][source[1]] = 7;
     const flowList = [source];
     flowArray[source[0]][source[1]] = 1;
@@ -705,12 +687,7 @@ function createFlowList(array: Array2D, density: number, height, preFlow, terrai
         [sources[j][0], sources[j][1] + 1],
         [sources[j][0], sources[j][1] - 1],
       ];
-      for (
-        let _pj_e = 0, _pj_c = adjacent, _pj_d = _pj_c.length;
-        _pj_e < _pj_d;
-        _pj_e += 1
-      ) {
-        const space = _pj_c[_pj_e];
+      for(const space of adjacent) {
         if (array[space[0]][space[1]] === 0 && random.random() < 0.5) {
           array[space[0]][space[1]] = 7;
           sources.push(space);
