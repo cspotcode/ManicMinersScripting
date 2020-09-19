@@ -539,7 +539,7 @@ function fillExtra(array: Array2D) {
   }
   return true;
 }
-function fillSquare(i, j, array, length, width, squareSize, value) {
+function fillSquare(i: number, j: number, array: Array2D, length: number, width: number, squareSize: number, value: number) {
   for (
     let k = max(i, 0), _pj_a = min(i + squareSize, length);
     k < _pj_a;
@@ -606,15 +606,14 @@ function flood(array: Array2D, heightArray: Array2D, floodLevel: number, floodTy
     }
   }
 }
-function heightMap(length, width, terrain, smoothness) {
-  let array, value;
-  array = createArray(length, width, 0);
+function heightMap(length: number, width: number, terrain: number, smoothness: number) {
+  const array = createArray(length, width, 0);
   terrain = max(terrain, 1);
   for (let i = -smoothness, _pj_a = length; i < _pj_a; i += 1) {
     for (let j = -smoothness, _pj_b = width; j < _pj_b; j += 1) {
-      value = random.randint(
-        -Number.parseInt(terrain),
-        Number.parseInt(terrain)
+      const value = random.randint(
+        -terrain,
+        terrain
       );
       fillSquare(i, j, array, length, width, smoothness, value);
     }
