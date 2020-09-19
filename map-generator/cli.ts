@@ -1,8 +1,9 @@
-import { generateDefaultParameters, Parameters, attemptGenerationWithRetries } from "./map-generator";
+import { attemptGenerationWithRetries } from "./map-generator";
 import { each, has } from "lodash";
 import { input } from "./python-shims/globals";
 import * as os from "./python-shims/os";
 import { writeFileSync } from "fs";
+import { generateDefaultParameters, Parameters } from "./parameters";
 
 function main() {
   const parameters: Parameters = generateDefaultParameters();

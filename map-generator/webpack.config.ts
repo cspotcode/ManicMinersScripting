@@ -6,9 +6,10 @@ const config: webpack.Configuration = {
   optimization: {
     minimize: false,
   },
-  entry: './browser.ts',
+  entry: './browser.tsx',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    // path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname),
     filename: 'browser.js'
   },
   // devServer: {

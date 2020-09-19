@@ -2,6 +2,6 @@
     "extends": "../tsconfig.json",
     "include": [
         "*.ts",
-        "python-shims/*.ts"
+        "python-shims/*.ts", "parameters.tsx", "browser.tsx"
     ]
 }

@@ -10,7 +10,17 @@ export function displayPNG(
 ) {
   const context = canvasElement.getContext("2d");
   const scale = 14;
-  // const img = Image.new_jscompat("RGB", [((wallArray[0].length * scale) + 1), ((wallArray.length * scale) + 1)], {"color": [0, 0, 0]});
+  const borderSize = 0;
+  const dotSize = 2;
+  const dotInset = 2;
+  const dotSpacing = 1;
+
+  const heightPx = wallArray.length * scale;
+  const widthPx = wallArray[0].length * scale;
+  canvasElement.setAttribute('width', `${ widthPx }`);
+  canvasElement.setAttribute('height', `${ heightPx }`);
+  context.fillStyle = 'black';
+  context.fillRect(0, 0, widthPx, heightPx);
   const colors = {
     "1": [24, 0, 59],
     "101": [24, 0, 59],
@@ -32,32 +42,31 @@ export function displayPNG(
     "14": [190, 190, 190],
     "114": [190, 190, 190],
   } as const;
-  //   draw = new ImageDraw.Draw(img);
   for (let i = 0, _pj_a = wallArray.length; i < _pj_a; i += 1) {
     for (let j = 0, _pj_b = wallArray[0].length; j < _pj_b; j += 1) {
       context.fillStyle = colorToRgb(colors[conversion[wallArray[i][j]]]);
       context.fillRect(
-        j * scale + 1,
-        i * scale + 1,
-        scale - 2,
-        scale - 2
+        j * scale + borderSize,
+        i * scale + borderSize,
+        scale - borderSize * 2,
+        scale - borderSize * 2
       );
       if (crystalArray[i][j] > 0) {
         context.fillStyle = colorToRgb(colors["42"]);
         context.fillRect(
-          j * scale + 2,
-          i * scale + scale - 4,
-          2,
-          2
+          j * scale + dotInset,
+          i * scale + scale - dotInset - dotSize,
+          dotSize,
+          dotSize
         );
       }
       if (oreArray[i][j] > 0) {
         context.fillStyle = colorToRgb(colors["46"]);
         context.fillRect(
-          j * scale + 5,
-          i * scale + scale - 4,
-          2,
-          2
+          j * scale + dotInset + dotSize + dotSpacing,
+          i * scale + scale - dotInset - dotSize,
+          dotSize,
+          dotSize
         );
       }
     }
