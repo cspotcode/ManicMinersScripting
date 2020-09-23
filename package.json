@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "install-both": "npm install && cd vscode-extension && npm install",
     "build": "npm run build-extension",
     "build-extension": "cd vscode-extension && npm run build"
   },

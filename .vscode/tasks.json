@@ -1,12 +1,60 @@
 {
-    "tasks": [{
-        "taskName": "build-snippets",
-        "isShellCommand": true,
-        "showOutput": "always",
-        "command": "npm",
-        "args": ["run", "build-snippets"],
-        "options": {
-            "cwd": "${workspaceFolder}/vscode-extension"
+    "tasks": [
+        {
+            "label": "npm-install",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run", "install-both"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+        {
+            "label": "build-snippets",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "build-snippets"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/vscode-extension"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+        {
+            "label": "build-extension",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "build"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
         }
-    }]
+    ]
 }
