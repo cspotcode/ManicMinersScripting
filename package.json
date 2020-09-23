@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "build": "npm run build-extension",
+    "build-extension": "cd vscode-extension && vsce package"
+  },
   "dependencies": {
     "@types/jquery": "^3.5.1",
     "@types/lodash": "^4.14.159",
