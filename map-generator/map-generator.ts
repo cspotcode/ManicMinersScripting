@@ -6,6 +6,9 @@ import { sortBy, keys, cloneDeep } from "lodash";
 import { displayPNG } from "./displayPNG";
 import { convertToMM } from "./convert-to-mm";
 import { Parameters } from './parameters';
+const Noise: typeof _Noise = require('noisejs').Noise;
+import type _Noise from 'noisejs';
+
 function _pj_snippets() {
   function in_es6(left, right) {
     if (right instanceof Array || typeof right === "string") {
@@ -99,12 +102,13 @@ export function mapgen(params: Parameters) {
   speleogenesis(crystalArray);
   cleanup(crystalArray);
   details(crystalArray, 5);
-  const heightArray = heightMap(
-    params.length + 1,
-    params.width + 1,
-    params.terrain,
-    params.smoothness
-  );
+  const heightArray = heightMap({
+    length: params.length + 1,
+    width: params.width + 1,
+    heightPerlinHorizontalScale: params.heightPerlinHorizontalScale,
+    heightPerlinMultiplier: params.heightPerlinMultiplier,
+    heightPerlinSeed: params.heightPerlinSeed
+  });
   if (!params.biome) {
     params.biome = (["ice", "rock", "lava"] as const)[random.randint(0, 2)];
   }
@@ -606,7 +610,17 @@ function flood(array: Array2D, heightArray: Array2D, floodLevel: number, floodTy
     }
   }
 }
-function heightMap(length: number, width: number, terrain: number, smoothness: number) {
+function heightMap(inputs: {length: number, width: number, heightPerlinHorizontalScale: number, heightPerlinMultiplier: number, heightPerlinSeed: number}) {
+  const {heightPerlinHorizontalScale, heightPerlinMultiplier, heightPerlinSeed, length, width} = inputs;
+  const noiseGenerator = new Noise(heightPerlinSeed);
+  const array = createArray(length, width, 0);
+  // terrain = max(terrain, 1);
+  forEachArray2D(array, (i, j) => {
+    array[i][j] = noiseGenerator.perlin2(i / heightPerlinHorizontalScale, j / heightPerlinHorizontalScale) * heightPerlinMultiplier;
+  });
+  return array;
+}
+function heightMap_old(length: number, width: number, terrain: number, smoothness: number) {
   const array = createArray(length, width, 0);
   terrain = max(terrain, 1);
   for (let i = -smoothness, _pj_a = length; i < _pj_a; i += 1) {

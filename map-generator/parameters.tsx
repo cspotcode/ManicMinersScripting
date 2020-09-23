@@ -135,6 +135,19 @@ export class Parameters {
     @observable
     @ParseAsNumber
     @Input(bindings => <input type="number" {...bindings}></input>)
+    heightPerlinHorizontalScale: number;
+    @observable
+    @ParseAsNumber
+    @Input(bindings => <input type="number" {...bindings}></input>)
+    heightPerlinMultiplier: number;
+    @observable
+    @ParseAsNumber
+    @Input(bindings => <input type="number" {...bindings}></input>)
+    heightPerlinSeed: number;
+
+    @observable
+    @ParseAsNumber
+    @Input(bindings => <input type="number" {...bindings}></input>)
     oxygen: number;
 
     @observable
@@ -184,6 +197,9 @@ export function generateDefaultParameters(): Parameters {
     save: true,
     name: 'Untitled',
     show: false,
+    heightPerlinHorizontalScale: 1,
+    heightPerlinMultiplier: 10,
+    heightPerlinSeed: random.randint(0, 65535)
   };
 }
 
