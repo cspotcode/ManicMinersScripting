@@ -16,22 +16,39 @@
         "Snippets"
     ],
     "contributes": {
-        "languages": [{
-            "id": "manicminerslevel",
-            "aliases": ["Manic Miners level", "manicminerslevel"],
-            "extensions": [".dat"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "manicminerslevel",
-            "scopeName": "source.manicminerslevel",
-            "path": "./syntaxes/manicminerslevel.tmLanguage.json"
-        }],
+        "languages": [
+            {
+                "id": "manicminerslevel",
+                "aliases": [
+                    "Manic Miners level",
+                    "manicminerslevel"
+                ],
+                "extensions": [
+                    ".dat"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "manicminerslevel",
+                "scopeName": "source.manicminerslevel",
+                "path": "./syntaxes/manicminerslevel.tmLanguage.json"
+            }
+        ],
         "snippets": [
             {
                 "language": "manicminerslevel",
                 "path": "./snippets.json"
             }
         ]
+    },
+    "scripts": {
+        "build": "npm run build-snippets && npm run build-package",
+        "build-snippets": "node ./generate-code-snippets.js",
+        "build-package": "vsce package"
+    },
+    "devDependencies": {
+        "vsce": "^1.79.5"
     }
 }

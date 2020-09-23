@@ -1,7 +1,7 @@
 {
   "scripts": {
     "build": "npm run build-extension",
-    "build-extension": "cd vscode-extension && vsce package"
+    "build-extension": "cd vscode-extension && npm run build"
   },
   "dependencies": {
     "@types/jquery": "^3.5.1",
