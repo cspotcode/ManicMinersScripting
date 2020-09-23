@@ -1,0 +1,115 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Manic Miners level",
+	"scopeName": "source.manicminerslevel",
+	"patterns": [
+		{
+			"include": "#section.other"
+		},
+		{
+			"include": "#section.script"
+		}
+	],
+	"repository": {
+		"section.other": {
+			"name": "section.other",
+			"begin": "\\b(comments|info|tiles|height|resource|objectives|buildings|landslidefrequency|lavaspread|miners|briefing|briefingsuccess|briefingfailure|vehicles|creatures)({)",
+			"end": "}",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.sectionname"
+				},
+				"2": {
+					"name": "punctuation.section.begin"
+				}
+			},
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.section.end"
+				}
+			}
+		},
+		"section.script": {
+			"name": "section.script",
+			"begin": "\\b(script)({)",
+			"end": "}",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.sectionname"
+				},
+				"2": {
+					"name": "punctuation.section.begin"
+				}
+			},
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.section.end"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#script.vardeclaration"
+				},
+				{
+					"include": "#script.eventchain.declaration"
+				},
+				{
+					"include": "#script.comment"
+				}
+			]
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.manicminerslevel",
+					"match": "\\b(if|while|for|return)\\b"
+				}
+			]
+		},
+		"strings": {
+			"name": "string.quoted.double.manicminerslevel",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.manicminerslevel",
+					"match": "\\\\."
+				}
+			]
+		},
+		"script.vardeclaration": {
+			"name": "script.vardeclaration",
+			"match": "\\b(string|int|float|bool|miner|vehicle|building|arrow) ([\\S]+)=(.+)",
+			"captures": {
+				"1": {
+					"name": "keyword.variabletype"
+				},
+				"2": {
+					"name": "variable.name"
+				},
+				"3": {
+					"name": "expression",
+					"patterns": [{
+						"include": "#script.expression"
+					}]
+				}
+			}
+		},
+		"script.eventchain.declaration": {
+			"name": "script.eventchain.declaration",
+			"match": "\\b([a-zA-Z][a-zA-Z0-9]*)::",
+			"captures": {
+				"1": {
+					"name": "variable.name"
+				}
+			}
+		},
+		"script.expression": {
+
+		},
+		"script.comment": {
+			"name": "comment",
+			"match": "#.*"
+		}
+	}
+}

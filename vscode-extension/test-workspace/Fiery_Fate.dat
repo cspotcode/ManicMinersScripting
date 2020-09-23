@@ -385,6 +385,7 @@ briefingfailure{
 vehicles{
 }
 script{
+    
 string LavaMess="The lava is rising, clear the low ground"
 string LavaMess2="The lava is here, miners better be off the low ground"
 string Hard="Hard difficulty, no large vehicles"
@@ -395,7 +396,8 @@ if(time:1)[msg:Chos]
 
 when(hover:20,58)((tmr==0))[msg:Easy]
 when(hover:20,57)((tmr==0))[msg:hard]
-
+when(click:10,10)[]
+if(BuildingToolStore_C)[Event]
 if(click:20,58)((tmr==0))[EasyM]
 if(click:20,57)((tmr==0))[HardM]
 if(time:30)((tmr==0))[NoCh]

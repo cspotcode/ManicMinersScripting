@@ -2,12 +2,18 @@
     "name": "manic-miners",
     "displayName": "Manic Miners",
     "description": "Editor support for Manic Miners custom level scripting.",
+    "publisher": "cspotcode",
     "version": "0.0.1",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cspotcode/ManicMinersScripting"
+    },
     "engines": {
         "vscode": "^1.49.0"
     },
     "categories": [
-        "Programming Languages"
+        "Programming Languages",
+        "Snippets"
     ],
     "contributes": {
         "languages": [{
@@ -20,6 +26,12 @@
             "language": "manicminerslevel",
             "scopeName": "source.manicminerslevel",
             "path": "./syntaxes/manicminerslevel.tmLanguage.json"
-        }]
+        }],
+        "snippets": [
+            {
+                "language": "manicminerslevel",
+                "path": "./snippets.json"
+            }
+        ]
     }
 }

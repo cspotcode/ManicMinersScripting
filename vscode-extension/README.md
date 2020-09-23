@@ -1,7 +1,8 @@
-# manic-miners README
+# Manic Miners custom level scripting
 
-This is the README for your extension "manic-miners". After writing up a brief description, we recommend including the following sections.
+Support for writing Manic Miners custom level scripts.
 
+<!--
 ## Features
 
 Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
@@ -63,3 +64,4 @@ Added features X, Y, and Z.
 * [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
 **Enjoy!**
+-->
