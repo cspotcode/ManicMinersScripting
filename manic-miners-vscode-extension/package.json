@@ -1,0 +1,25 @@
+{
+    "name": "manic-miners",
+    "displayName": "Manic Miners",
+    "description": "Editor support for Manic Miners custom level scripting.",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.49.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "manicminerslevel",
+            "aliases": ["Manic Miners level", "manicminerslevel"],
+            "extensions": [".dat"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "manicminerslevel",
+            "scopeName": "source.manicminerslevel",
+            "path": "./syntaxes/manicminerslevel.tmLanguage.json"
+        }]
+    }
+}
