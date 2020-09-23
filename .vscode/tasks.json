@@ -1,0 +1,12 @@
+{
+    "tasks": [{
+        "taskName": "build-snippets",
+        "isShellCommand": true,
+        "showOutput": "always",
+        "command": "npm",
+        "args": ["run", "build-snippets"],
+        "options": {
+            "cwd": "${workspaceFolder}/vscode-extension"
+        }
+    }]
+}
