@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -euxo pipefail
+shopt -s inherit_errexit
 
 # This requires setting up creds to push back to github
 # npm version patch
