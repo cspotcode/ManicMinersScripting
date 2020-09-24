@@ -7,7 +7,7 @@ shopt -s inherit_errexit
 # git push && git push --tags
 
 # This is the lazy approach
-npm version "0.0.1-$(node -p "(new Date).toISOString().replace(/:/g, '_')")"
+npm version "0.0.1-$(node -p "(new Date).toISOString().replace(/:/g, '-')")"
 
 vcse package
 vcse publish
