@@ -10,6 +10,9 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '12'
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
       - run: npm run install-both
       - run: cd vscode-extension && npm run build
       - run: cd vscode-extension && npm run publish-extension
