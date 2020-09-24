@@ -5,3 +5,5 @@ vsc-extension-quickstart.md
 test-workspace
 generate-code-snippets.js
 *.vsix
+/scripts
+/.npmrc

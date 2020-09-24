@@ -46,7 +46,8 @@
     "scripts": {
         "build": "npm run build-snippets && npm run build-package",
         "build-snippets": "node ./generate-code-snippets.js",
-        "build-package": "vsce package"
+        "build-package": "vsce package",
+        "publish-extension": "./scripts/publish-extension.sh"
     },
     "devDependencies": {
         "vsce": "^1.79.5"

@@ -1,0 +1,17 @@
+name: build-publish-extension
+on:
+  push:
+    branches: master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+      - run: npm run install-both
+      - run: cd vscode-extension && npm run build
+      - run: cd vscode-extension && npm run publish-extension
+        env:
+          VSCE_PAT: ${{ secrets.AZURE_PUBLISH_TOKEN }}
