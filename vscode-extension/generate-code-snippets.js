@@ -18,6 +18,7 @@ const Path = require('path');
 
 const snippets = {};
 
+//can be found here https://manicminers.fandom.com/wiki/Scripting#Variable_Types
 /** @type {Array<{name: string; keyword?: string}>} */
 const variableTypes = [{
     name: 'string',
@@ -41,16 +42,59 @@ for(const variableType of variableTypes) {
     snippets[`variable declaration: ${ name }`] = {
         prefix: name,
         body: `${keyword} `,
-        description: `Creates a ${name} variable`
+		description: `Creates a ${name} variable`
     };
 }
 
-// TODO add all the other vehicle names here
-
+//a full list of the vehicles cann be found here https://manicminers.fandom.com/wiki/Classes#Vehicles
 /** @type {Array<{name: string, className: string}>} */
 const vehicles = [{
     name: 'Small Digger',
     className: 'VehicleSmallDigger_C'
+},
+{
+	name: 'Hover Scout',
+	className: 'VehicleHoverScout_C'
+},
+{
+	name: 'Small Transport Truck',
+	className: 'VehicleSmallTransportTruck_C'
+},
+{
+	name: 'Small Mobile Laser Cutter',
+	className: 'VehicleSMLC_C'
+},
+{
+	name: 'Rapid Rider',
+	className: 'VehicleRapidRider_C'
+},
+{
+	name: 'Tunnel Scout',
+	className: 'VehicleTunnelScout_C'
+},
+{
+	name: 'Loader Dozer',
+	className: 'VehicleLoaderDozer_C'
+},
+{
+	name: 'Granite Grinder',
+	className: 'VehicleGraniteGrinder_C'
+},
+{
+	name: 'Chrome Crusher',
+	className: 'VehicleChromeCrusher_C'
+},
+{
+	name: 'Large Mobile Laser Cutter',
+	className: 'VehicleLMLC_C'
+},
+{
+	name: 'Cargo Carrier',
+	className: 'VehicleCargoCarrier_C'
+},
+{
+	name: 'Tunnel Transport',
+	className: 'VehicleTunnelTransport_C'
 }];
 
 for(const vehicle of vehicles) {
@@ -62,9 +106,74 @@ for(const vehicle of vehicles) {
     };
 }
 
+//a full list of the buildings cann be found here https://manicminers.fandom.com/wiki/Classes#Buildings
+/** @type {Array<{name: string, className: string}>} */
+const buildings = [{
+	name: 'Tool Store',
+    className: 'BuildingToolStore_C'
+},
+{
+	name: 'Teleport Pad',
+    className: 'BuildingTeleportPad_C'
+},
+{
+	name: 'Docks',
+    className: 'BuildingDocks_C'
+},
+{
+	name: 'Power Station',
+    className: 'BuildingPowerStation_C'
+},
+{
+	name: 'Support Station',
+    className: 'BuildingSupportStation_C'
+},
+{
+	name: 'Upgrade Station',
+    className: 'BuildingUpgradeStation_C'
+},
+{
+	name: 'Geological Center',
+    className: 'BuildingGeologicalCenter_C'
+},
+{
+	name: 'Ore Refinery',
+    className: 'BuildingOreRefinery_C'
+},
+{
+	name: 'Mining Laser',
+    className: 'BuildingMiningLaser_C'
+},
+{
+	name: 'Super Teleport',
+    className: 'BuildingSuperTeleport_C'
+},
+{
+	name: 'Electric Fence',
+    className: 'BuildingElectricFence_C'
+},
+{
+	name: 'Power Path',
+    className: 'BuildingPowerPath_C'
+},
+{
+	name: 'Erosion Repair',
+    className: 'BuildingErosionRepair_C'
+}]
+
+for(const building of buildings) {
+    const {className, name} = building;
+    snippets[`building ${name}`] = {
+        description: `Class name for ${ name } more infos under https://manicminers.fandom.com/wiki/Classes#Buildings`,
+        prefix: className,
+        body: className,
+    };
+}
+
 // All other snippets
 Object.assign(snippets, {
 	// --------------------------- OCCURENCE -----------------------------------------------------
+	//can be found here https://manicminers.fandom.com/wiki/Scripting#OCCURENCE
 	"When": {
 		"prefix": "when()",
 		"body": "when(${1:Trigger})[${2:Event}]"
@@ -74,6 +183,7 @@ Object.assign(snippets, {
 		"body": "if(${1:Trigger})[${2:Event}]"
 	},
 	// --------------------------- CONDITIONS -----------------------------------------------------
+	//can be found here https://manicminers.fandom.com/wiki/Scripting#CONDITION_.28optional.29
 	"IfCond": {
 		"prefix": "comp",
 		"body": "((${1:Variable1}${2|>,>=,<=,<,==,!=|}${3:Variable2}))[$0]",
@@ -85,12 +195,14 @@ Object.assign(snippets, {
 		"description": "Conditional event, executes first event if condition is true, second event otherwise"
 	},
 	// --------------------------- VARIABLES -----------------------------------------------------
+	//can be found here https://manicminers.fandom.com/wiki/Scripting#Variables
 	"Random": {
 		"prefix": "random()()",
 		"body": "random($1)($2)",
 		"description": "Creates a random integer or float"
 	},
 	// --------------------------- TRIGGERS -----------------------------------------------------
+	//can be found here https://manicminers.fandom.com/wiki/Scripting#Triggers
 	"Drill_1": {
 		"prefix": "TriggerDrill",
 		"body": "drill:${1:row},${2:column}",
@@ -167,6 +279,7 @@ Object.assign(snippets, {
 		"description": "Activates when a class enters a tile, either miner or vehicle. Optionally add a NAME requirement to make the trigger fire only for a specific class.*"
 	},	
 	// --------------------------- EVENTS -----------------------------------------------------
+	//can be found here https://manicminers.fandom.com/wiki/Scripting#Events
 	"Drill_2": {
 		"prefix": "EventDrill",
 		"body": "drill:${1:row},${2:column}",
@@ -223,6 +336,7 @@ Object.assign(snippets, {
 		"description": "Saves the last unit who activated a trigger into a variable. Can be combined with walk/drive/enter triggers for example."
 	},
 	// --------------------------- PLAYER EVENTS -----------------------------------------------------
+	//can be found here https://manicminers.fandom.com/wiki/Scripting#Player_interaction
 	"Reset": {
 		"prefix": "EventReset",
 		"body": "reset",
@@ -247,8 +361,35 @@ Object.assign(snippets, {
 		"prefix": "EventResetspeed",
 		"body": "resetspeed",
 		"description": "Loads the game speed from settings again"
-    }
+	},
+	//------------------ added some blocks from *.dat file----------------------------
+	    "comments": {
+        "prefix": "comments",
+        "body": [
+            "comments \{\n\t${1|MyComment,YourComment|}\n\}"
+        ],
+        "description": "Placeholder for comments"
+	},
+		"info": {
+			"prefix" : "info",
+			"body" : [
+				"info\{\nrowcount:${1:int}\ncolcount:${2:int}\ncamerapos:Translation: X=${3:double} Y=${4:double} Z=${5:double} Rotation: P=${6:double} Y=${7:double} R=${8:double} Scale X=${9:double} Y=${10:double} Z=${11:double}\nbiome:${12:biomName}\ncreator:${13:MMSkript}\nerosioninitialwaittime:${14:int}\nversion:${15:yyyy-mm-dd-v}\ncamerazoom:${16:double}\nerosionscale:${17:double}\noxygen:${18:int/3000}\nspiderchance:${19:double}\n\}"
+			],
+			"description" : "info block which contains rowcount, colcount, camerapos, biome, creator, erosioninitalwaittime, version, camerazomm, erosionscale, oxygen, spiderchance"
+	},
+		"BuildingPosition": {
+			"prefix" : "", //-> when a building is in buildings tag, position is needed
+			"body" : [
+					"\nTranslation: X=${1:double} Y=${2:double} Z=${3:double} Rotation: P=${4:double} Y=${5:double} R=${6:double} Scale X=${7:double} Y=${8:double} Z=${9:double}"
+			],
+			"description" : "Define position of building"
+		}
 });
+
+//Nice to know
+//Placeholders:
+//${1:comment} -> will write comment
+//${1|comment, comment2|}, will open a new menu, where you can choose between, the two options
 
 // Here we write the snippets to disk, overwriting `.vscode/manic-miners.code-snippets`
 // We can also do additional things here.  For example, we can publish the file to Github for others to download.
