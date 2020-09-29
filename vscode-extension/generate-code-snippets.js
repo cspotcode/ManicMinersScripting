@@ -41,10 +41,6 @@ for(const variableType of variableTypes) {
 const macros = [{
   name: 'erosionscale',
   description: 'Parameter that scales erosion rate globally.'
-    "prefix": "Variable_erosionscale",
-    "body": ["erosionscale"],
-    "description": "Parameter that scales erosion rate globally."
-  }	
 }];
 
 for(const macro of macros) {
