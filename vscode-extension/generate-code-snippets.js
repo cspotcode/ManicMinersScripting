@@ -38,6 +38,24 @@ for(const variableType of variableTypes) {
     };
 }
 
+const macros = [{
+  name: 'erosionscale',
+  description: 'Parameter that scales erosion rate globally.'
+    "prefix": "Variable_erosionscale",
+    "body": ["erosionscale"],
+    "description": "Parameter that scales erosion rate globally."
+  }	
+}];
+
+for(const macro of macros) {
+    const {name, description} = macro;
+    snippets[`macro: ${ name }`] = {
+        prefix: `Macro_${ name }`,
+        body: [name],
+	description
+    };
+}
+
 //a full list of the vehicles cann be found here https://manicminers.fandom.com/wiki/Classes#Vehicles
 /** @type {Array<{name: string, className: string}>} */
 const vehicles = [{
@@ -309,7 +327,7 @@ Object.assign(snippets, {
 	},
 	"Sound": {
 		"prefix": "EventSound",
-		"body": "lose:${1:sound_name}",
+		"body": "sound:${1:sound_name}",
 		"description": "Plays the .ogg file of that name from /ManicMiners/Levels/ASSETS/Sounds (do not include the \".ogg\" extension in the script)"
 	},
 	"Pan": {
@@ -375,7 +393,12 @@ Object.assign(snippets, {
 					"\nTranslation: X=${1:double} Y=${2:double} Z=${3:double} Rotation: P=${4:double} Y=${5:double} R=${6:double} Scale X=${7:double} Y=${8:double} Z=${9:double}"
 			],
 			"description" : "Define position of building"
-		}
+		},
+  "reservedchain_tick": {
+    "prefix": "tick",
+    "body": ["tick::;\n"],
+    "description": "Reserved event chain that fires every frame."
+  }
 });
 
 //Nice to know
