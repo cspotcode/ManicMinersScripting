@@ -391,7 +391,7 @@ Object.assign(snippets, {
 			"description" : "Define position of building"
 		},
   "Event: tick": {
-    "prefix": "tick",
+    "prefix": "EventTick",
     "body": ["tick::;\n"],
     "description": "Reserved event chain that fires every frame."
   }
