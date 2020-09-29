@@ -390,7 +390,7 @@ Object.assign(snippets, {
 			],
 			"description" : "Define position of building"
 		},
-  "reservedchain_tick": {
+  "Reserved event: tick": {
     "prefix": "tick",
     "body": ["tick::;\n"],
     "description": "Reserved event chain that fires every frame."
