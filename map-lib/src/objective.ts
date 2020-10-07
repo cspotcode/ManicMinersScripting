@@ -7,7 +7,8 @@ export enum ObjectiveType {
     building = 'building',
     discovertile = 'discovertile',
     findbuilding = 'findbuilding',
-    resources = 'resources'
+    resources = 'resources',
+    variable = 'variable'
 }
 
 export function createObjectiveFromLine(content: string) {
@@ -87,6 +88,20 @@ export class ResourcesObjective extends Objective {
     }
 }
 
+export class VariableObjective extends Objective {
+    readonly type = ObjectiveType.variable;
+    conditional: string;
+    description: string;
+    serializeFields() {
+        return `${this.conditional}/${this.description}`;
+    }
+    parseFields(content: string) {
+        const [, conditional, description] = content.match(/^(.*?)\/(.*)$/);
+        this.conditional = conditional;
+        this.description = description;
+    }
+}
+
 /*
 building:BuildingDocks_C
 discovertile:2,48/Lost Rockraiders 1
@@ -104,7 +119,8 @@ const ctorLookup = {
     building: BuildingObjective,
     discovertile: DiscoverTileObjective,
     findbuilding: FindBuildingObjective,
-    resources: ResourcesObjective
+    resources: ResourcesObjective,
+    variable: VariableObjective
 }
 
 export class ObjectivesSection extends AbstractMapSection {
@@ -118,6 +134,6 @@ export class ObjectivesSection extends AbstractMapSection {
         }
     }
     serialize() {
-        return this.objectives.map(o => o.serialize()).join(NEWLINE) + NEWLINE;
+        return this.objectives.map(o => `${ o.serialize() }${ NEWLINE }`).join('');
     }
 }

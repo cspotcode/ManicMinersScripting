@@ -55,7 +55,7 @@ export class Building {
         this.teleport = teleportLine.match(/Teleport=(.*)/)[1] === 'True' ? true : false;
         const healthString = healthLine.match(/Health=(.*)/)[1];
         this.hpMax = healthString === 'MAX';
-        this.hpValue = this.hpMax ? null : parseInt(healthString);
+        this.hpValue = this.hpMax ? null : parseFloat(healthString);
         const powerPaths = powerPathsLine.match(/Powerpaths=(.*)/)[1].split('/').filter(v => v);
         this.powerPaths.length = 0;
         for(const pp of powerPaths) {

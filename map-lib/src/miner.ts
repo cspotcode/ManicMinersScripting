@@ -24,9 +24,12 @@ export class Miner {
     readonly upgrades: MinerUpgradeName[] = [];
     level: number = 0;
     id: number = 0;
+    name: string | null = null;
     parse(content: string) {
-        const [idLine, transformString, upgradesInput] = content.split(NEWLINE);
-        this.id = parseInt(idLine.match(/ID=(.*)/)[1]);
+        const [idNameLine, transformString, upgradesInput] = content.split(NEWLINE);
+        const [idString, nameString] = idNameLine.match(/ID=(.*)$/)[1].split('/');
+        this.id = parseInt(idString);
+        this.name = nameString ?? null;
         this.transform.parse(transformString);
         const upgradeStrings = upgradesInput.split('/').filter(v => v);
         const upgrades = upgradeStrings.filter(v => v !== 'Level') as MinerUpgradeName[];
@@ -40,7 +43,7 @@ export class Miner {
             levels += 'Level/';
         }
         return [
-            `ID=${this.id}`,
+            `ID=${ this.id }${ this.name == null ? '' : `/${ this.name }` }`,
             `${this.transform.serialize()}`,
             `${this.upgrades.join('/')}${levels}`,
             ''

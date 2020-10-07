@@ -20,12 +20,13 @@ export enum MapSectionName {
     briefingsuccess = 'briefingsuccess',
     briefingfailure = 'briefingfailure',
     vehicles = 'vehicles',
-    script = 'script'
+    script = 'script',
+    creatures = 'creatures'
 }
 
 export type MapSection = CommentsSection | InfoSection | TilesSection | HeightSection | ResourcesSection
     | ObjectivesSection | BuildingsSection | LandslideFrequencySection | LavaSpreadSection
-    | MinersSection | BriefingSection | BriefingSuccessSection | BriefingFailureSection | VehiclesSection | ScriptSection;
+    | MinersSection | BriefingSection | BriefingSuccessSection | BriefingFailureSection | VehiclesSection | ScriptSection | CreaturesSection;
 
 export abstract class AbstractMapSection {
     abstract readonly name: MapSectionNameUnion;
@@ -61,6 +62,9 @@ export class BriefingSuccessSection extends TextSection {
 }
 export class BriefingFailureSection extends TextSection {
     readonly name = MapSectionName.briefingfailure;
+}
+export class CreaturesSection extends TextSection {
+    readonly name = MapSectionName.creatures;
 }
 
 export abstract class KVSection<T> extends AbstractMapSection {

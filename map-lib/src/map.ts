@@ -1,14 +1,18 @@
 import { BuildingsSection } from "./building";
-import { CommentsSection, InfoSection, AbstractMapSection, ScriptSection, VehiclesSection, BriefingSection, LavaSpreadSection, LandslideFrequencySection, MapSectionNameUnion, TilesSection, HeightSection, ResourcesSection } from "./map-section";
+import { CommentsSection, InfoSection, AbstractMapSection, ScriptSection, VehiclesSection, BriefingSection, LavaSpreadSection, LandslideFrequencySection, MapSectionNameUnion, TilesSection, HeightSection, ResourcesSection, BriefingSuccessSection, BriefingFailureSection, CreaturesSection, MapSectionName } from "./map-section";
 import { MinersSection } from "./miner";
 import { ObjectivesSection } from "./objective";
 
 export const NEWLINE = '\r\n';
+const sectionSplitRe = /\r\n\}(?:\r\n|$)/;
 
 export class Map {
     readonly sections = new MapSections(this);
     parse(content: string) {
-        const sectionInputs = content.split(NEWLINE + '}' + NEWLINE).filter(v => v).map(s => s + NEWLINE);
+        for(const section of this.sections.sections) {
+            section.present = false;
+        }
+        const sectionInputs = content.split(sectionSplitRe).filter(v => v).map(s => s + NEWLINE);
         for(const sectionInput of sectionInputs) {
             const sectionName = sectionInput.match(/^(\S+)\s*\{/)[1] as MapSectionNameUnion;
             const section = this.sections[sectionName];
@@ -39,8 +43,11 @@ export class MapSections {
     readonly lavaspread = new LavaSpreadSection(this);
     readonly miners = new MinersSection(this);
     readonly briefing = new BriefingSection(this);
+    readonly briefingsuccess = new BriefingSuccessSection(this);
+    readonly briefingfailure = new BriefingFailureSection(this);
     readonly vehicles = new VehiclesSection(this);
     readonly script = new ScriptSection(this);
+    readonly creatures = new CreaturesSection(this);
     readonly sections: AbstractMapSection[] = [
         this.comments,
         this.info,
@@ -53,7 +60,10 @@ export class MapSections {
         this.lavaspread,
         this.miners,
         this.briefing,
+        this.briefingsuccess,
+        this.briefingfailure,
         this.vehicles,
-        this.script
+        this.script,
+        this.creatures
     ];
 }
