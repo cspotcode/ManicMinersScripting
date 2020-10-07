@@ -1,4 +1,9 @@
 {
+  "workspaces": [
+    "map-lib",
+    "map-generator",
+    "vscode-extension"
+  ],
   "scripts": {
     "install-both": "npm install && cd vscode-extension && npm install",
     "build": "npm run build-extension",

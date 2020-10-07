@@ -1,0 +1,10 @@
+{
+    "name": "map-lib",
+    "dependencies": {
+        "@types/diff": "^4.0.2",
+        "@types/lodash": "^4.14.161",
+        "chevrotain": "^7.0.2",
+        "diff": "^4.0.2",
+        "lodash": "^4.17.20"
+    }
+}
