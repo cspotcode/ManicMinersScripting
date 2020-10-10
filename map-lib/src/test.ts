@@ -27,6 +27,6 @@ function test(name: string) {
     if(diffFiltered.length) {
         // console.dir(diff);
         console.dir(diffFiltered);
-        process.exit(0);
+        // process.exit(0);
     }
 }

@@ -1,7 +1,11 @@
 import { BuildingsSection } from "./building";
-import { CommentsSection, InfoSection, AbstractMapSection, ScriptSection, VehiclesSection, BriefingSection, LavaSpreadSection, LandslideFrequencySection, MapSectionNameUnion, TilesSection, HeightSection, ResourcesSection, BriefingSuccessSection, BriefingFailureSection, CreaturesSection, MapSectionName } from "./map-section";
+import { HeightSection, ResourcesSection, TilesSection } from "./grid-sections";
+import { InfoSection } from "./info-section";
+import { CommentsSection, AbstractMapSection, ScriptSection, BriefingSection, MapSectionNameUnion, BriefingSuccessSection, BriefingFailureSection, CreaturesSection } from "./map-section";
 import { MinersSection } from "./miner";
 import { ObjectivesSection } from "./objective";
+import { LandslideFrequencySection, LavaSpreadSection } from "./timed-event-sections";
+import { VehiclesSection } from "./vehicle";
 
 export const NEWLINE = '\r\n';
 const sectionSplitRe = /\r\n\}(?:\r\n|$)/;
@@ -9,19 +13,19 @@ const sectionSplitRe = /\r\n\}(?:\r\n|$)/;
 export class Map {
     readonly sections = new MapSections(this);
     parse(content: string) {
-        for(const section of this.sections.sections) {
+        for(const section of this.sections.allSections) {
             section.present = false;
         }
         const sectionInputs = content.split(sectionSplitRe).filter(v => v).map(s => s + NEWLINE);
         for(const sectionInput of sectionInputs) {
-            const sectionName = sectionInput.match(/^(\S+)\s*\{/)[1] as MapSectionNameUnion;
+            const sectionName = sectionInput.match(/^(\S+)\s*\{/)![1] as MapSectionNameUnion;
             const section = this.sections[sectionName];
             section.present = true;
             section.parse(sectionInput.replace(/^.*\{/, '').replace(NEWLINE, ''));
         }
     }
     serialize() {
-        return this.sections.sections.filter(s => s.present).map(s => {
+        return this.sections.allSections.filter(s => s.present).map(s => {
             return `${s.name}{${NEWLINE}${s.serialize()}}${NEWLINE}`;
         }).join('');
     }
@@ -48,7 +52,7 @@ export class MapSections {
     readonly vehicles = new VehiclesSection(this);
     readonly script = new ScriptSection(this);
     readonly creatures = new CreaturesSection(this);
-    readonly sections: AbstractMapSection[] = [
+    readonly allSections: AbstractMapSection[] = [
         this.comments,
         this.info,
         this.tiles,

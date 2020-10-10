@@ -20,7 +20,7 @@ export class Transform {
         this.zScale = other.zScale;
     }
     parse(content: string) {
-        const [, sx, sy, sz, spitch, syaw, sroll, sxscale, syscale, szscale] = content.match(/^Translation: X=(-?\d+\.\d+) Y=(-?\d+\.\d+) Z=(-?\d+\.\d+) Rotation: P=(-?\d+\.\d+) Y=(-?\d+\.\d+) R=(-?\d+\.\d+) Scale X=(-?\d+\.\d+) Y=(-?\d+\.\d+) Z=(-?\d+\.\d+)$/);
+        const [, sx, sy, sz, spitch, syaw, sroll, sxscale, syscale, szscale] = content.match(/^Translation: X=(-?\d+\.\d+) Y=(-?\d+\.\d+) Z=(-?\d+\.\d+) Rotation: P=(-?\d+\.\d+) Y=(-?\d+\.\d+) R=(-?\d+\.\d+) Scale X=(-?\d+\.\d+) Y=(-?\d+\.\d+) Z=(-?\d+\.\d+)$/)!;
         this.x = parseFloat(sx);
         this.y = parseFloat(sy);
         this.z = parseFloat(sz);
@@ -38,7 +38,7 @@ export class Transform {
     }
 }
 
-function formatNumber(number: number, digitsAfterDecimalPoint: number) {
+export function formatNumber(number: number, digitsAfterDecimalPoint: number) {
     let a = number.toString();
     if(!a.includes('.')) a += '.';
     a += '000000';

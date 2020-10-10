@@ -1,7 +1,11 @@
 import { BuildingsSection } from "./building";
-import { MapSections, NEWLINE } from "./map";
+import { HeightSection, ResourcesSection, TilesSection } from "./grid-sections";
+import { InfoSection } from "./info-section";
+import { MapSections } from "./map";
 import { MinersSection } from "./miner";
 import { ObjectivesSection } from "./objective";
+import { LandslideFrequencySection, LavaSpreadSection } from "./timed-event-sections";
+import { VehiclesSection } from "./vehicle";
 
 export type MapSectionNameUnion = keyof typeof MapSectionName;
 
@@ -40,7 +44,7 @@ export abstract class AbstractMapSection {
 }
 
 export abstract class TextSection extends AbstractMapSection {
-    content: string;
+    content: string = '';
     serialize() {
         return this.content;
     }
@@ -65,52 +69,4 @@ export class BriefingFailureSection extends TextSection {
 }
 export class CreaturesSection extends TextSection {
     readonly name = MapSectionName.creatures;
-}
-
-export abstract class KVSection<T> extends AbstractMapSection {
-    readonly rawFields: T = Object.create(null) as any;
-    parse(content: string) {
-        content.split(NEWLINE).filter(v => v).forEach((line) => {
-            const [, key, value] = line.match(/^(.+?)\:(.*)$/);
-            this.rawFields[key] = value;
-        });
-    }
-    serialize(): string {
-        return Object.entries(this.rawFields).map(([key, value]) =>
-            `${key}:${value}`
-        ).join(NEWLINE) + NEWLINE;
-    }
-}
-
-export interface InfoSectionRawFields {
-    rowcount: string;
-    colcount: string;
-    camerapos: string;
-    biome: string;
-    creator: string;
-    erosioninitialwaittime: string;
-    erosionscale: string;
-    version: string;
-    camerazoom: string;
-}
-export class InfoSection extends KVSection<InfoSectionRawFields> {
-    readonly name = MapSectionName.info;
-}
-export class TilesSection extends TextSection {
-    readonly name = MapSectionName.tiles;
-}
-export class HeightSection extends TextSection {
-    readonly name = MapSectionName.height;
-}
-export class ResourcesSection extends TextSection {
-    readonly name = MapSectionName.resources;
-}
-export class LandslideFrequencySection extends TextSection {
-    readonly name = MapSectionName.landslidefrequency;
-}
-export class LavaSpreadSection extends TextSection {
-    readonly name = MapSectionName.lavaspread;
-}
-export class VehiclesSection extends TextSection {
-    readonly name = MapSectionName.vehicles;
 }

@@ -1,54 +1,54 @@
-export class Array2D<T = number> {
-    constructor(...args: (T extends number ? [defaultFill?: T] : [defaultFill: T])) {
-        const [defaultFill = 0 as any as T] = args;
-        this._defaultFill = defaultFill;
-    }
-    private _defaultFill: T;
-    get(x: number, y: number): T {
-        return this.rows[y][x];
-    }
-    set(x: number, y: number, value: T): void {
-        this.rows[y][x] = value;
-    }
-    set height(v: number) {
-        const {width, _rows, _defaultFill} = this;
-        if(_rows.length > v) _rows.length = v;
-        else {
-            while(_rows.length < v) {
-                _rows.push(createArray(width, _defaultFill));
-            }
-        }
-    }
-    get height() {
-        return this.rows.length;
-    }
-    get width() {
-        return this.rows[0]?.length ?? 0;
-    }
-    set width(v: number) {
-        const {width, height, _rows, _defaultFill} = this;
-        for(const row of _rows) {
-            if(row.length > v) row.length = v;
-            else {
-                while(row.length < v) {
-                    row.push(_defaultFill);
-                }
-            }
-        }
-    }
-    forEach(cb: (x: number, y: number, value: T) => void) {
-        const {width, height} = this;
-        for(let y = 0; y < height; y++) {
-            for(let x = 0; x < width; x++) {
-                cb(x, y, this.get(x, y));
-            }
-        }
-    }
-    private get _rows() {
-        return this.rows as Array<Array<T>>;
-    }
-    readonly rows: ReadonlyArray<Array<T>>;
-}
+// export class Array2D<T = number> {
+//     constructor(...args: (T extends number ? [defaultFill?: T] : [defaultFill: T])) {
+//         const [defaultFill = 0 as any as T] = args;
+//         this._defaultFill = defaultFill;
+//     }
+//     private _defaultFill: T;
+//     get(x: number, y: number): T {
+//         return this.rows[y][x];
+//     }
+//     set(x: number, y: number, value: T): void {
+//         this.rows[y][x] = value;
+//     }
+//     set height(v: number) {
+//         const {width, _rows, _defaultFill} = this;
+//         if(_rows.length > v) _rows.length = v;
+//         else {
+//             while(_rows.length < v) {
+//                 _rows.push(createArray(width, _defaultFill));
+//             }
+//         }
+//     }
+//     get height() {
+//         return this.rows.length;
+//     }
+//     get width() {
+//         return this.rows[0]?.length ?? 0;
+//     }
+//     set width(v: number) {
+//         const {width, height, _rows, _defaultFill} = this;
+//         for(const row of _rows) {
+//             if(row.length > v) row.length = v;
+//             else {
+//                 while(row.length < v) {
+//                     row.push(_defaultFill);
+//                 }
+//             }
+//         }
+//     }
+//     forEach(cb: (x: number, y: number, value: T) => void) {
+//         const {width, height} = this;
+//         for(let y = 0; y < height; y++) {
+//             for(let x = 0; x < width; x++) {
+//                 cb(x, y, this.get(x, y));
+//             }
+//         }
+//     }
+//     private get _rows() {
+//         return this.rows as Array<Array<T>>;
+//     }
+//     readonly rows: ReadonlyArray<Array<T>>;
+// }
 
 function createArray<T>(length: number): Array<number>;
 function createArray<T>(length: number, fill: T): Array<T>;
@@ -190,7 +190,7 @@ export enum Tile {
 namespace TileUtils {
     export function isPlaceable() {}
     export function isReinforced(tileId: Tile) {
-        return tileId > 150 || (tileId > 
+        return tileId > 150 || (tileId > 50 && false /* TODO */);
     }
     export function isHidden(tileId: Tile) {
         return tileId > 100;
@@ -200,8 +200,8 @@ namespace TileUtils {
 if(Tile.CliffType2Experimental !== 65) throw new Error('Tile enum is somehow wrong');
 for(const [key, value] of Object.entries(Tile)) {
     if(key.endsWith('_Reinforced')) {
-        const reinforcedId = Tile[key];
-        const unReinforcedId = Tile[key.replace(/_Reinforced$/, '')];
+        const reinforcedId = Tile[key as keyof typeof Tile];
+        const unReinforcedId = Tile[key.replace(/_Reinforced$/, '') as keyof typeof Tile];
         if(reinforcedId !== unReinforcedId + 50) throw new Error('Tile enum is somehow wrong: reinforced ID should be unreinforced ID + 50');
     }
 }

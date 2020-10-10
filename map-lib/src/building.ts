@@ -28,7 +28,7 @@ Powerpaths=X=0 Y=5 Z=5/
 */
 
 export class Building {
-    type: BuildingNameUnion;
+    type!: BuildingNameUnion;
     transform = new Transform();
     level = 1;
     teleport = false;
@@ -51,15 +51,15 @@ export class Building {
         const [name, transformLine, levelLine, teleportLine, healthLine, powerPathsLine] = c.split(NEWLINE);
         this.type = name as BuildingNameUnion;
         this.transform.parse(transformLine);
-        this.level = parseInt(levelLine.match(/Level=(\d+)/)[1]);
-        this.teleport = teleportLine.match(/Teleport=(.*)/)[1] === 'True' ? true : false;
-        const healthString = healthLine.match(/Health=(.*)/)[1];
+        this.level = parseInt(levelLine.match(/Level=(\d+)/)![1]);
+        this.teleport = teleportLine.match(/Teleport=(.*)/)![1] === 'True' ? true : false;
+        const healthString = healthLine.match(/Health=(.*)/)![1];
         this.hpMax = healthString === 'MAX';
         this.hpValue = this.hpMax ? null : parseFloat(healthString);
-        const powerPaths = powerPathsLine.match(/Powerpaths=(.*)/)[1].split('/').filter(v => v);
+        const powerPaths = powerPathsLine.match(/Powerpaths=(.*)/)![1].split('/').filter(v => v);
         this.powerPaths.length = 0;
         for(const pp of powerPaths) {
-            const [, xs, ys, zs] = pp.match(/^X=(\d+) Y=(\d+) Z=(\d+)$/);
+            const [, xs, ys, zs] = pp.match(/^X=(\d+) Y=(\d+) Z=(\d+)$/)!;
             this.powerPaths.push({
                 x: parseInt(xs),
                 y: parseInt(ys),

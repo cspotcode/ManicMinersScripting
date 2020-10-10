@@ -12,7 +12,7 @@ export enum ObjectiveType {
 }
 
 export function createObjectiveFromLine(content: string) {
-    const [, type, rest] = content.match(/^(.*?):(.*)/);
+    const [, type, rest] = content.match(/^(.*?):(.*)/)!;
     const Ctor = ctorLookup[type as ObjectiveTypeUnion];
     const objective = new Ctor();
     objective.parseFields(rest);
@@ -31,7 +31,7 @@ export abstract class Objective {
 
 export class BuildingObjective extends Objective {
     readonly type = ObjectiveType.building;
-    building: BuildingNameUnion;
+    building!: BuildingNameUnion;
     serializeFields() {
         return this.building;
     }
@@ -42,14 +42,14 @@ export class BuildingObjective extends Objective {
 
 export class DiscoverTileObjective extends Objective {
     readonly type = ObjectiveType.discovertile;
-    description: string;
-    x: number;
-    y: number;
+    description: string = '';
+    x: number = 0;
+    y: number = 0;
     serializeFields() {
         return `${this.x},${this.y}/${this.description}`;
     }
     parseFields(content: string) {
-        const [, xs, ys, description] = content.match(/^(\d+),(\d+)\/(.*)$/);
+        const [, xs, ys, description] = content.match(/^(\d+),(\d+)\/(.*)$/)!;
         this.x = parseInt(xs);
         this.y = parseInt(ys);
         this.description = description;
@@ -58,8 +58,8 @@ export class DiscoverTileObjective extends Objective {
 
 export class FindBuildingObjective extends Objective {
     readonly type = ObjectiveType.findbuilding;
-    x: number;
-    y: number;
+    x: number = 0;
+    y: number = 0;
     serializeFields() {
         return `${this.x},${this.y}`;
     }
@@ -73,9 +73,9 @@ export class FindBuildingObjective extends Objective {
 export class ResourcesObjective extends Objective {
     readonly type = ObjectiveType.resources;
     readonly addSpaceAfterColon = true;
-    crystals: number;
-    ore: number;
-    studs: number;
+    crystals: number = 0;
+    ore: number = 0;
+    studs: number = 0;
     serializeFields() {
         return `${this.crystals},${this.ore},${this.studs}`;
     }
@@ -90,13 +90,13 @@ export class ResourcesObjective extends Objective {
 
 export class VariableObjective extends Objective {
     readonly type = ObjectiveType.variable;
-    conditional: string;
-    description: string;
+    conditional: string = '';
+    description: string = '';
     serializeFields() {
         return `${this.conditional}/${this.description}`;
     }
     parseFields(content: string) {
-        const [, conditional, description] = content.match(/^(.*?)\/(.*)$/);
+        const [, conditional, description] = content.match(/^(.*?)\/(.*)$/)!;
         this.conditional = conditional;
         this.description = description;
     }

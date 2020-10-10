@@ -27,7 +27,7 @@ export class Miner {
     name: string | null = null;
     parse(content: string) {
         const [idNameLine, transformString, upgradesInput] = content.split(NEWLINE);
-        const [idString, nameString] = idNameLine.match(/ID=(.*)$/)[1].split('/');
+        const [idString, nameString] = idNameLine.match(/ID=(.*)$/)![1].split('/');
         this.id = parseInt(idString);
         this.name = nameString ?? null;
         this.transform.parse(transformString);

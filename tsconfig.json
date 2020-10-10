@@ -9,7 +9,8 @@
         "outDir": "dist",
         "target": "es6",
         "jsx": "react",
-        "preserveConstEnums": true
+        "preserveConstEnums": true,
+        "strict": true
     },
     "include": [
         "*.ts",
