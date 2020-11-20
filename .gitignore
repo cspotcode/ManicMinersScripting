@@ -2,3 +2,4 @@
 /dist
 /yarn-error.log
 /map-lib/node_modules
+/portable-node-npm/install-dir

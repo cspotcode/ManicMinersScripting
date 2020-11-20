@@ -1,12 +1,16 @@
 {
     "tasks": [
         {
-            "label": "npm-install",
+            "label": "bootstrap",
             "type": "shell",
-            "command": "npm",
-            "args": [
-                "run", "install-both"
-            ],
+            "command": "cmd.exe",
+            "args": ["/C", "scripts\\bootstrap.cmd"],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "Path": "${workspaceFolder}/portable-node-npm/install-dir/node;${env:Path}"
+                }
+            },
             "problemMatcher": [],
             "presentation": {
                 "echo": true,
@@ -15,8 +19,25 @@
                 "panel": "shared",
                 "showReuseMessage": true,
                 "clear": false
-            }
+            },
         },
+        // {
+        //     "label": "npm-install",
+        //     "type": "shell",
+        //     "command": "npm",
+        //     "args": [
+        //         "run", "install-both"
+        //     ],
+        //     "problemMatcher": [],
+        //     "presentation": {
+        //         "echo": true,
+        //         "reveal": "always",
+        //         "focus": false,
+        //         "panel": "shared",
+        //         "showReuseMessage": true,
+        //         "clear": false
+        //     }
+        // },
         {
             "label": "build-snippets",
             "type": "shell",
@@ -26,7 +47,10 @@
                 "build-snippets"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/vscode-extension"
+                "cwd": "${workspaceFolder}/vscode-extension",
+                "env": {
+                    "Path": "${workspaceFolder}/portable-node-npm/install-dir/node;${env:Path}"
+                }
             },
             "problemMatcher": [],
             "presentation": {
