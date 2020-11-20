@@ -3,7 +3,7 @@
     "displayName": "Manic Miners",
     "description": "Editor support for Manic Miners custom level scripting.",
     "publisher": "cspotcode",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "repository": {
         "type": "git",
         "url": "https://github.com/cspotcode/ManicMinersScripting"
