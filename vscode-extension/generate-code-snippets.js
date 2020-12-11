@@ -394,6 +394,11 @@ Object.assign(snippets, {
     "prefix": "EventTick",
     "body": ["tick::;\n"],
     "description": "Reserved event chain that fires every frame."
+  },
+  "For GetID": {
+    "prefix": ["get", "for-const"],
+    "body": ["get(int)(int)"],
+    "description": "get Tile Id."
   }
 });
 
